@@ -1,11 +1,12 @@
 import requests
 import dns.resolver
 
-domain = ""
+domain = "domain-here"
 apikey = "NULL"
 
 def banner():
-        print("Author: M0H17")
+    # print("##     ##  #######  ##     ##    ##   ########\n###   ### ##     ## ##     ##  ####   ##    ##\n#### #### ##     ## ##     ##    ##       ##\n## ### ## ##     ## #########    ##      ##\n##     ## ##     ## ##     ##    ##     ##\n##     ## ##     ## ##     ##    ##     ##\n##     ##  #######  ##     ##  ######   ##\n")
+    print("Author: M0H17")
 
 banner()
 
@@ -42,7 +43,8 @@ def request_send(subdomain):
             except Exception as e1:
                 cname = str(e1)
                 pass
-            printer(res, cname)
+            ip = ipresolver(subdomain)
+            printer(res, cname, ip)
         except Exception as e:
             print("Exception Occured While Sending Request 1: " + str(e))
     except Exception as e:
@@ -61,10 +63,18 @@ def storage1():
     print("\nListed all Sub-Domains found on VirusTotal")
     print("You can check results upto till done scanning process in the vt_subdomains.txt file")
 
-def printer(res,cname):
+def ipresolver(subdomain):
+    try:
+        ip = dns.resolver.query(subdomain)
+        for data in ip:
+            return data
+    except Exception as e:
+        return str(e)
+
+def printer(res,cname,ip):
     print("~"*30)
-    print("Host:\t" + str(res.url) + "\n" + "Status:\t" + str(
-        res.status_code) + "\t\t\t" + "Server Version:\t" + res.headers.get("server") + "\n" + "CNAME:\t" + str(
+    print("IP: " + str(ip) + "\t\tHost:\t" + str(res.url) + "\n" + "Status:\t" + str(
+        res.status_code) + "\t\t\t\t" + "Server Version:\t" + res.headers.get("server") + "\n" + "CNAME:\t" + str(
         cname) + "\n")
 
 def storage2():
