@@ -3,7 +3,7 @@ import dns.resolver
 import subprocess
 import sys
 
-domain = "domain-here"
+domain = "domain"
 apikey = "NULL"
 
 def banner():
@@ -23,6 +23,7 @@ def total():
             file.write(subdomain + "\n")
     except Exception as e:
         print("Exception: " + str(e))
+	    print("Problem with API key provided.")
 
 
 def cnames(ip):
@@ -38,10 +39,10 @@ def cnames(ip):
                 if (items.__len__() > 5):
                     if ("CNAME" not in items):
                         output.append(str(items) + " ")
-    for i in range(0, 3):
+    for i in range(0,3):
         output.pop(0)
     str1 = ''.join(output)
-    str1 = str1.replace("'", "").replace(";", " ").replace(",", "")
+    str1 = str1.replace("'", "").replace(";", " ").replace(",", "").replace("AUTHORITY", "\n\tAUTHORITY").replace("ADDITIONAL","\n\tADDITIONAL").replace("ANSWER","\n\tANSWER")
     return str(str1)
 
 
@@ -59,12 +60,13 @@ def request_send(subdomain):
             ip = ipresolver(subdomain)
             printer(res, cname, ip)
         except Exception as e:
-            print("Exception Occured While Sending Request 1: " + str(e))
+            #print("Exception Occured While Sending Request 1: " + str(e))
+	        pass
     except Exception as e:
         if("Max retries exceeded with url" in str(e)):
             pass
         else:
-            print("Exception Occured While Sending Request 2: " + str(e))
+            print("Exception Occured While Sending Request: " + str(e))
 
 
 def storage1():
@@ -75,7 +77,7 @@ def storage1():
         subdomain=subdomain.rstrip('\n\r')
         request_send(subdomain)
     print("\nListed all Sub-Domains found on VirusTotal")
-    print("You can check results upto till done scanning process in the vt_subdomains.txt file")
+    print("You can check results upto till done scanning process in the vt_subdomains file")
 
 
 def ipresolver(subdomain):
@@ -106,16 +108,26 @@ def storage2():
             		subomain = items + "." + domain
             		request_send(subomain)
     	else:
-		print("EXITING")
+		    print("  ")
     except Exception as e:
 		print("Exception Occured: " + str(e))
 
 
+banner()
+try:
+	if(sys.argv[1]):
+		domain = str(sys.argv[1])
+except Exception as e:
+	print(e)
 
-if(apikey != "NULL"):
-    storage1()
-    storage2()
+if (domain == "domain"):
+        print("NO DOMAIN TO TEST")
 else:
-    print("You might have not provided the virustotal API-KEY in the script.")
-    storage2()
+	print("Domain set as: " + domain)
+	if(apikey == "NULL"):
+		print("No Virus-Total API Key Found. Please ADD the API key in line 7 of code. ")
+		storage2()
+   	else: 
+		storage1()
 
+print("Exiting ...")
