@@ -23,7 +23,7 @@ def total():
             file.write(subdomain + "\n")
     except Exception as e:
         print("Exception: " + str(e))
-	    print("Problem with API key provided.")
+	print("Problem with API key provided.")
 
 
 def cnames(ip):
@@ -58,7 +58,7 @@ def request_send(subdomain):
                 cname = str(e1)
                 pass
             ip = ipresolver(subdomain)
-            printer(res, cname, ip)
+            printer(subdomain, res, cname, ip)
         except Exception as e:
             #print("Exception Occured While Sending Request 1: " + str(e))
 	        pass
@@ -89,9 +89,9 @@ def ipresolver(subdomain):
         return str(e)
 
 
-def printer(res,cname,ip):
-    print("~"*70)
-    print("IP: " + str(ip) + "\t\tHost:\t" + str(res.url) + "\t\t" + "Status:\t" + str(
+def printer(subdomain,res,cname,ip):
+    #print("~"*70)
+    print("IP: " + str(ip) + "\t\tHost:\t" + subdomain + "\t\t" + "Status:\t" + str(
         res.status_code) + "\t\t\t" + "Server Version:\t" + res.headers.get("server") + "\n" + "CNAME:\t" + str(
         cname) + "\n")
 
