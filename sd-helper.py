@@ -99,7 +99,7 @@ def printer(subdomain,res,cname,ip):
 	print(colored(str(cname),"blue"))
     else:
 	print(colored(str(cname),"red"))
-    print("\n")
+    #print("\n")
 
 
 
