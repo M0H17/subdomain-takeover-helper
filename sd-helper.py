@@ -28,7 +28,7 @@ def total():
 
 
 def cnames(ip):
-    cmd = "dig CNAME " + ip
+    cmd = "dig SOA " + ip
     name = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
     out = name.communicate()
     out = list(out).__str__().split(";;")
@@ -38,12 +38,16 @@ def cnames(ip):
             lines = str(lines).replace('\\n', '\\t').split("\\t")
             for items in str(lines).split():
                 if (items.__len__() > 5):
-                    if ("CNAME" not in items):
+                    if ("SOA" not in items):
                         output.append(str(items) + " ")
     for i in range(0,3):
         output.pop(0)
     str1 = ''.join(output)
-    str1 = str1.replace("'", "").replace(";", " ").replace(",", "").replace("AUTHORITY", "\n\tAUTHORITY").replace("ADDITIONAL","\n\tADDITIONAL").replace("ANSWER","\tANSWER")
+    str1 = str1.replace("'", "").replace(";", " ").replace(",", "").replace("ANSWER","\tANSWER")
+    if("ANSWER" in str1):
+	str1 = str1.replace("AUTHORITY", "\n\tAUTHORITY").replace("ADDITIONAL","\n\tADDITIONAL")
+    else:
+        str1 = str1.replace("AUTHORITY", "\tAUTHORITY").replace("ADDITIONAL","\tADDITIONAL")
     return str(str1)
 
 
@@ -67,7 +71,7 @@ def request_send(subdomain):
         if("Max retries" in str(e)):
             pass
         else:
-            print("  Exception Occured While Sending Request: " + str(e))
+            print(subdomain + "  -- DNS Request ERROR")
 
 
 def storage1():
@@ -75,7 +79,6 @@ def storage1():
     total()
     print(colored("Status\t" + "IP-Address\t" + "subdomain\t\t" + "\tServer Version","yellow"))
     file = open("vt_subdomains", "r")
-    #print("Status\t" + "IP-Address\t" + "subdomain\t\t" + "\tServer Version")
     for subdomain in file.readlines():
         subdomain=subdomain.rstrip('\n\r')
         request_send(subdomain)
@@ -93,14 +96,12 @@ def ipresolver(subdomain):
 
 
 def printer(subdomain,res,cname,ip):
-    #print("~"*70)
     print("  " + str(res.status_code)+ "\t" + colored(str(ip),"green") + "\t" + subdomain + "\t\t" + res.headers.get("server"))
     if(domain in cname):
 	print(colored(str(cname),"blue"))
     else:
 	print(colored(str(cname),"red"))
     #print("\n")
-
 
 
 def storage2():
