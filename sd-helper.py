@@ -2,9 +2,10 @@ import requests
 import dns.resolver
 import subprocess
 import sys
+from termcolor import colored
 
 domain = "domain"
-apikey = "NULL"
+apikey = "77825ad2636fab5f95a34769f70b2f35ed1998a6793ea7e01946f8842177db0d"
 
 def banner():
     # print("##     ##  #######  ##     ##    ##   ########\n###   ### ##     ## ##     ##  ####   ##    ##\n#### #### ##     ## ##     ##    ##       ##\n## ### ## ##     ## #########    ##      ##\n##     ## ##     ## ##     ##    ##     ##\n##     ## ##     ## ##     ##    ##     ##\n##     ##  #######  ##     ##  ######   ##\n")
@@ -42,13 +43,13 @@ def cnames(ip):
     for i in range(0,3):
         output.pop(0)
     str1 = ''.join(output)
-    str1 = str1.replace("'", "").replace(";", " ").replace(",", "").replace("AUTHORITY", "\n\tAUTHORITY").replace("ADDITIONAL","\n\tADDITIONAL").replace("ANSWER","\n\tANSWER")
+    str1 = str1.replace("'", "").replace(";", " ").replace(",", "").replace("AUTHORITY", "\n\tAUTHORITY").replace("ADDITIONAL","\n\tADDITIONAL").replace("ANSWER","\tANSWER")
     return str(str1)
 
 
 def request_send(subdomain):
     try:
-        r = requests.get('http://' + subdomain)
+ 	r = requests.get('http://' + subdomain,timeout=5)
         protocol = r.url.split('://')[0]
         try:
             res = requests.get(str(protocol) + "://" + subdomain)
@@ -60,19 +61,21 @@ def request_send(subdomain):
             ip = ipresolver(subdomain)
             printer(subdomain, res, cname, ip)
         except Exception as e:
-            #print("Exception Occured While Sending Request 1: " + str(e))
+                #print("Exception Occured While Sending Request 1: " + str(e))
 	        pass
     except Exception as e:
-        if("Max retries exceeded with url" in str(e)):
+        if("Max retries" in str(e)):
             pass
         else:
-            print("Exception Occured While Sending Request: " + str(e))
+            print("  Exception Occured While Sending Request: " + str(e))
 
 
 def storage1():
     print("Checking VirusTotal Subdomains")
     total()
+    print(colored("Status\t" + "IP-Address\t" + "subdomain\t\t" + "\tServer Version","yellow"))
     file = open("vt_subdomains", "r")
+    #print("Status\t" + "IP-Address\t" + "subdomain\t\t" + "\tServer Version")
     for subdomain in file.readlines():
         subdomain=subdomain.rstrip('\n\r')
         request_send(subdomain)
@@ -91,9 +94,13 @@ def ipresolver(subdomain):
 
 def printer(subdomain,res,cname,ip):
     #print("~"*70)
-    print("IP: " + str(ip) + "\t\tHost:\t" + subdomain + "\t\t" + "Status:\t" + str(
-        res.status_code) + "\t\t\t" + "Server Version:\t" + res.headers.get("server") + "\n" + "CNAME:\t" + str(
-        cname) + "\n")
+    print("  " + str(res.status_code)+ "\t" + colored(str(ip),"green") + "\t" + subdomain + "\t\t" + res.headers.get("server"))
+    if(domain in cname):
+	print(colored(str(cname),"blue"))
+    else:
+	print(colored(str(cname),"red"))
+    print("\n")
+
 
 
 def storage2():
@@ -101,7 +108,8 @@ def storage2():
     	check = raw_input("\nDo you want to check subdomains using wordlist? (Y/N) : ")
     	check = str(check).lower()
     	if(check == "y"):
-        	targets = open("wordlist.txt","r")
+        	print(colored("Status\tIP-Address\tSub-Domain\t\t\tServer Version","yellow"))
+		targets = open("wordlist.txt","r")
         	content = targets.readlines()
         	content = [x.strip() for x in content]
         	for items in content:
@@ -123,7 +131,7 @@ except Exception as e:
 if (domain == "domain"):
         print("NO DOMAIN TO TEST")
 else:
-	print("Domain set as: " + domain)
+	print("Domain set as: " + colored(domain,"blue"))
 	if(apikey == "NULL"):
 		print("No Virus-Total API Key Found. Please ADD the API key in line 7 of code. ")
 		storage2()
