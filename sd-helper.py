@@ -5,7 +5,7 @@ import sys
 from termcolor import colored
 
 domain = "domain"
-apikey = "77825ad2636fab5f95a34769f70b2f35ed1998a6793ea7e01946f8842177db0d"
+apikey = "NULL"
 
 def banner():
     # print("##     ##  #######  ##     ##    ##   ########\n###   ### ##     ## ##     ##  ####   ##    ##\n#### #### ##     ## ##     ##    ##       ##\n## ### ## ##     ## #########    ##      ##\n##     ## ##     ## ##     ##    ##     ##\n##     ## ##     ## ##     ##    ##     ##\n##     ##  #######  ##     ##  ######   ##\n")
