@@ -129,5 +129,6 @@ else:
 		storage2()
    	else: 
 		storage1()
+		storage2()
 
 print("Exiting ...")
